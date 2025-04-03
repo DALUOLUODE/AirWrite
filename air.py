@@ -7,6 +7,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from PIL import Image, ImageDraw, ImageFont
 import os
+import platform
+
 
 
 # 用PIL绘制中文文本到OpenCV图像
@@ -17,15 +19,27 @@ def cv2_put_chinese_text(img, text, position, textColor=(0, 255, 0), textSize=30
     # 创建一个可以在给定图像上绘制的对象
     draw = ImageDraw.Draw(img)
 
-    # 字体文件路径
-    fontStyle = None
-    # 尝试加载系统中文字体
-    possible_fonts = [
-        os.path.join(os.environ.get('SystemRoot', 'C:\\Windows'), 'Fonts', 'simhei.ttf'),  # 黑体
-        os.path.join(os.environ.get('SystemRoot', 'C:\\Windows'), 'Fonts', 'simsun.ttc'),  # 宋体
-        os.path.join(os.environ.get('SystemRoot', 'C:\\Windows'), 'Fonts', 'msyh.ttc'),  # 微软雅黑
-    ]
+    # 根据操作系统选择字体路径
+    if platform.system() == 'Windows':
+        system_root = os.environ.get('SystemRoot', 'C:\\Windows')
+        possible_fonts = [
+            os.path.join(system_root, 'Fonts', 'simhei.ttf'),  # 黑体
+            os.path.join(system_root, 'Fonts', 'simsun.ttc'),  # 宋体
+            os.path.join(system_root, 'Fonts', 'msyh.ttc'),  # 微软雅黑
+        ]
+    elif platform.system() == 'Darwin':  # macOS
+        possible_fonts = [
+            '/System/Library/Fonts/STHeiti Light.ttc',  # macOS 自带黑体
+            '/System/Library/Fonts/PingFang.ttc',  # 苹果自带苹方字体
+            os.path.join(os.path.expanduser('~'), 'Library', 'Fonts', 'SimHei.ttf'),  # 用户目录下的黑体
+        ]
+    else:  # 其他系统（如 Linux）
+        possible_fonts = [
+            '/usr/share/fonts/truetype/SimHei.ttf',  # Linux 示例路径（需手动安装）
+        ]
 
+    # 尝试加载字体
+    fontStyle = None
     for font_path in possible_fonts:
         if os.path.exists(font_path):
             try:
@@ -33,6 +47,14 @@ def cv2_put_chinese_text(img, text, position, textColor=(0, 255, 0), textSize=30
                 break
             except:
                 continue
+
+    # for font_path in possible_fonts:
+    #     if os.path.exists(font_path):
+    #         try:
+    #             fontStyle = ImageFont.truetype(font_path, textSize)
+    #             break
+    #         except:
+    #             continue
 
     # 如果找不到中文字体，使用默认字体（可能不支持中文）
     if fontStyle is None:
