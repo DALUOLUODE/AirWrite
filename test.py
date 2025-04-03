@@ -686,7 +686,7 @@ def main():
                     made_prediction = True
                     ready_to_predict = False  # 重置预测准备状态
 
-                    # 保存ROI图像
+                    # 保存ROI图
                     cv2.imwrite(f"{prediction_result}.jpg", roi)
                     print("----- 预测完成 -----\n")
                 except Exception as e:
