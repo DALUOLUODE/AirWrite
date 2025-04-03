@@ -394,7 +394,7 @@ def main():
             is_tracking = True
             print("手部追踪已启动！")
 
-        # 开始绘制
+        # 开始绘
         elif key == ord('d'):
             is_drawing = True
             last_mouse_pos = None  # 重置鼠标位置
