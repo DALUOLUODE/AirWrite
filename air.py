@@ -232,7 +232,7 @@ def main():
     use_mediapipe = True
 
     try:
-        print("正在初始化MediaPipe手部追踪...")
+        print("正在初始MediaPipe手部追踪...")
         mp_hands = mp.solutions.hands
         hands = mp_hands.Hands(
             static_image_mode=False,
